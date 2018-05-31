@@ -27,3 +27,79 @@ $ git remote add origin https://git.oschina.net/liuqiqiang/gitTest.git
 六.上传代码到远程库,上传之前最好先Pull一下,再执行命令: git pull origin master
 
 七.接着执行:git push origin master
+
+
+
+
+
+分支管理
+
+新建分支
+
+$ git branch newbranch
+查看分支
+
+$ git branch
+输出:
+
+* master
+  newbranch
+*代表当前所在的分支
+
+切换分支
+
+$ git checkout new branch
+输出
+
+Switched to branch 'newbranch'
+切换后可用git branch查看是否切换到当前分支
+
+master
+* newbranch
+提交改动到当前分支
+
+$ git add .
+$ git commit -a
+可使用git status查看提交状态
+
+接着切回主分支
+
+$ git checkout master
+输出:
+
+Switched to branch 'master'
+将新分支提交的改动合并到主分支上
+
+$ git merge newbranch
+输出:
+
+复制代码
+Updating cc73a48..93a1347
+Fast-forward
+ GitTest.xcodeproj/project.pbxproj                        |   9 +++++++++
+ .../UserInterfaceState.xcuserstate                       | Bin 0 -> 7518 bytes
+ GitTest/test.h                                           |  13 +++++++++++++
+ GitTest/test.m                                           |  13 +++++++++++++
+ 4 files changed, 35 insertions(+)
+ create mode 100644 GitTest.xcodeproj/project.xcworkspace/xcuserdata/Artron_LQQ.xcuserdatad/UserInterfaceState.xcuserstate
+ create mode 100644 GitTest/test.h
+ create mode 100644 GitTest/test.m
+复制代码
+这里我提交了两个文件,即:test.h和test.m
+
+如果合并后产生冲突,可输入以下指令查看冲突:
+
+$ git diff
+修改之后,再次提交即可;
+
+接下来,就可以push代码了:
+
+$ git push -u origin master
+这时可能需要你输入你的github用户名和密码,按照提示输入即可;
+
+删除分支
+
+$ git branch -D newbranch
+输出
+
+Deleted branch newbranch (was 93a1347).
