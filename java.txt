@@ -1,0 +1,2 @@
+keytool -genkey -alias "tomcat" -keyalg "RSA" -keystore ./tomcat.keystore
+keytool -importkeystore -srckeystore ./tomcat.keystore -destkeystore ./tomcat.keystore -deststoretype pkcs12

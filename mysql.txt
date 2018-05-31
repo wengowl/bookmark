@@ -1,0 +1,460 @@
+mysql -u root -p
+show database
+create database
+grant select,insert,update,delete,create,drop,alter on rcbt.* to rcbt@localhost identified by '123456';
+
+
+
+2、连接到远程主机上的MYSQL。假设远程主机的IP为：110.110.110.110，用户名为root,密码为abcd123。则键入以下命 令：
+
+　mysql -h110.110.110.110 -u root -p 123;(注:u与root之间可以不用加空格，其它也一样)
+
+　3、 退出MYSQL命令： exit (回车)
+
+　二、修改密码
+
+　格式：mysqladmin -u用户名 -p旧密码 password 新密码。 例如
+
+　1、 给root加个密码ab12。首先在DOS下进入目录mysql\bin，然后键入以下命令
+
+　mysqladmin -u root -password ab12
+
+　2、 再将root的密码改为djg345。
+
+　mysqladmin -u root -p ab12 password ******
+
+　三、创建数据库
+
+　1、 CREATE DATABASE 数据库名;
+
+　2、 GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER,REFERENCES ON 数据库名.* TO 数据库名@localhost IDENTIFIED BY '密码';
+
+　3、 SET PASSWORD FOR
+
+'数据库名'@'localhost' = OLD_PASSWORD('密码');
+
+依次执行3个命令完成数据库创建。注意：中文 “密码”和“数据库”是户自己需要设置的。
+
+—————————————————————————————————————————————
+
+现在介绍一些常用的MYSQL命令
+
+注意：你必须首先登录到MYSQL中，以下操作都是在MYSQL的提示符下进行的，而且每个命令以分号结束。
+
+一、操作技巧
+
+1、如果你打命令时，回车后发现忘记加分号，你无须重打一遍命令，只要打个分号回车就可以了。
+
+也就是说你可以把一个完整的命令分成几行来打，完后用分号作结束标志就OK。
+
+2、你可以使用光标上下键调出以前的命令。
+
+二、常用命令
+
+1、显示当前数据库服务器中的数据库列表：
+
+mysql> SHOW DATABASES;
+
+2、建立数据库：
+
+mysql> CREATE DATABASE 库名;
+
+3、建立数据表：
+
+mysql> USE 库名;
+
+mysql> CREATE TABLE 表名 (字段名 VARCHAR(20), 字段名 CHAR(1));
+
+4、删除数据库：
+
+mysql> DROP DATABASE 库名;
+
+5、删除数据表：
+
+mysql> DROP TABLE 表名;
+
+6、将表中记录清空：
+
+mysql> DELETE FROM 表名;
+
+7、往表中插入记录：
+
+mysql> INSERT INTO 表名 VALUES ("hyq","M");
+
+8、更新表中数据：
+
+mysql-> UPDATE 表名 SET 字段名1='a',字段名2='b' WHERE 字段名3='c';
+
+9、用文本方式将数据装入数据表中：
+
+mysql> LOAD DATA LOCAL INFILE "D:/mysql.txt" INTO TABLE 表名;
+
+10、导入.sql文件命令：
+
+mysql> USE 数据库名;
+
+mysql> SOURCE d:/mysql.sql;
+
+11、命令行修改root密码：
+
+mysql> UPDATE mysql.user SET password=PASSWORD('新密码') WHERE User='root';
+
+mysql> FLUSH PRIVILEGES;
+
+三、一个建库和建表以及插入数据的实例
+
+drop database if exists school; //如果存在sudu则删除
+
+create database sudu; //建立库sudu
+
+use school; //打开库sudu
+
+create table teacher //建立表TEACHER
+
+(
+
+id int(3) auto_increment not null primary key,
+
+name char(10) not null,
+
+address varchar(50) default '深圳',
+
+year date
+
+); //建表结束
+
+//以下为插入字段
+
+insert into teacher values('','allen','飞数科技1','2005-10-10');
+
+insert into teacher values('','jack','飞数科技2','2005-12-23');如果你在mysql提示符键入上面的命令也可以，但不方便调试。
+
+(1)你可以将以上命令原样写入一个文本文件中，假设为sudu.sql，然后复制到c:\\下，并在DOS状态进入目录\mysql\bin，然后键入以下命令：
+
+mysql -uroot -p密码 < c:\sudu.sql
+
+如果成功，空出一行无任何显示;如有错误，会有提示。(以上命令已经调试，你只要将//的注释去掉即可使用)。
+
+(2)或者进入命令行后使用 mysql> source c:\sudu.sql; 也可以将sudu.sql文件导入数据库中。
+
+四、将文本数据转到数据库中
+
+1、文本数据应符合的格式：字段数据之间用tab键隔开，null值用\n来代替.例：
+
+3 rose 飞数科技1 1976-10-10
+
+4 mike 飞数科技2 1975-12-23
+
+假设你把这两组数据存为速度sudu.txt文件，放在c盘根目录下。
+
+2、数据传入命令 load data local infile "c:\sudu.txt" into table 表名;
+
+注意：你最好将文件复制到\mysql\bin目录下，并且要先用use命令打表所在的库。
+
+五、备份数据库：(命令在DOS的\mysql\bin目录下执行)
+
+1.导出整个数据库
+
+导出文件默认是存在mysql\bin目录下
+
+mysqldump -u 用户名 -p 数据库名 > 导出的文件名
+
+mysqldump -u user_name -p123456 database_name > outfile_name.sql
+
+2.导出一个表
+
+mysqldump -u 用户名 -p 数据库名 表名> 导出的文件名
+
+mysqldump -u user_name -p database_name table_name > outfile_name.sql
+
+3.导出一个数据库结构
+
+mysqldump -u user_name -p -d --add-drop-table database_name > outfile_name.sql
+
+-d 没有数据 --add-drop-table 在每个create语句之前增加一个drop table
+
+4.带语言参数导出
+
+mysqldump -uroot -p --default-character-set=latin1 --set-charset=gbk --skip-opt database_name > outfile_name.sql
+
+
+
+
+该问题其实与mysql的validate_password_policy的值有关。
+查看一下msyql密码相关的几个全局参数：
+[sql] view plain copy
+mysql> select @@validate_password_policy;  
++----------------------------+  
+| @@validate_password_policy |  
++----------------------------+  
+| MEDIUM                     |  
++----------------------------+  
+1 row in set (0.00 sec)  
+  
+  
+mysql> SHOW VARIABLES LIKE 'validate_password%';  
++--------------------------------------+--------+  
+| Variable_name                        | Value  |  
++--------------------------------------+--------+  
+| validate_password_dictionary_file    |        |  
+| validate_password_length             | 8      |  
+| validate_password_mixed_case_count   | 1      |  
+| validate_password_number_count       | 1      |  
+| validate_password_policy             | MEDIUM |  
+| validate_password_special_char_count | 1      |  
++--------------------------------------+--------+  
+6 rows in set (0.08 sec)  
+
+2）参数解释
+
+validate_password_dictionary_file
+插件用于验证密码强度的字典文件路径。
+
+validate_password_length
+密码最小长度，参数默认为8，它有最小值的限制，最小值为：validate_password_number_count + validate_password_special_char_count + (2 * validate_password_mixed_case_count)
+
+validate_password_mixed_case_count
+密码至少要包含的小写字母个数和大写字母个数。
+
+validate_password_number_count
+密码至少要包含的数字个数。
+
+validate_password_policy
+密码强度检查等级，0/LOW、1/MEDIUM、2/STRONG。有以下取值：
+Policy                 Tests Performed                                                                                                        
+0 or LOW               Length                                                                                                                      
+1 or MEDIUM         Length; numeric, lowercase/uppercase, and special characters                             
+2 or STRONG        Length; numeric, lowercase/uppercase, and special characters; dictionary file      
+默认是1，即MEDIUM，所以刚开始设置的密码必须符合长度，且必须含有数字，小写或大写字母，特殊字符。
+
+validate_password_special_char_count
+密码至少要包含的特殊字符数。
+
+3）修改mysql参数配置
+[sql] view plain copy
+mysql> set global validate_password_policy=0;  
+Query OK, 0 rows affected (0.05 sec)  
+  
+mysql>   
+mysql>   
+mysql> set global validate_password_mixed_case_count=0;  
+Query OK, 0 rows affected (0.00 sec)  
+  
+mysql> set global validate_password_number_count=3;  
+Query OK, 0 rows affected (0.00 sec)  
+  
+mysql> set global validate_password_special_char_count=0;  
+Query OK, 0 rows affected (0.00 sec)  
+  
+mysql> set global validate_password_length=3;  
+Query OK, 0 rows affected (0.00 sec)  
+  
+mysql> SHOW VARIABLES LIKE 'validate_password%';  
++--------------------------------------+-------+  
+| Variable_name                        | Value |  
++--------------------------------------+-------+  
+| validate_password_dictionary_file    |       |  
+| validate_password_length             | 3     |  
+| validate_password_mixed_case_count   | 0     |  
+| validate_password_number_count       | 3     |  
+| validate_password_policy             | LOW   |  
+| validate_password_special_char_count | 0     |  
++--------------------------------------+-------+  
+6 rows in set (0.00 sec)  
+
+
+4）修改简单密码：
+[sql] view plain copy
+mysql> SET PASSWORD FOR 'root'@'localhost' = PASSWORD('123');  
+Query OK, 0 rows affected, 1 warning (0.00 sec)  
+
+
+OK了，完美解决！
+
+
+
+
+
+
+对于常见的乱码问题，有的在数据库本身已经为gbk或gb2312时候，但是查询出来却是乱码，这是因为mysql在连接的过程中还有道编码，因此将连接的编码设为gb2312或utf-8
+
+即可，如：
+
+jdbc:mysql://localhost:3306/ipanel?useUnicode=true&amp;characterEncoding=UTF-8
+
+hibernate和jdbc的参数设置是不一样，但大体相同，网上类似的资料很多。
+
+最重要的是这个问题：
+
+Illegal mix of collations (gbk_chinese_ci,IMPLICIT) and (gb2312_chinese_ci,IMPLICIT) for operation '='
+
+相信有很多人碰到，意思是说字符编码不一样，不能进行比较，也就是说数据库内部的编码都不一样，有的数据是
+
+gbk_chinese_ci,有的数据是gb2312_chinese_ci，因此解决此问题的核心就是将数据库所有的编码进行统一。
+
+进入命令行模式，
+
+如果MySQL数据库已经安装好，可以使用下列SQL命令查看MySQL当前的字符集设置： 
+mysql> SHOW VARIABLES LIKE 'character_set_%'; 
++--------------------------+----------------------------+ 
+| Variable_name | Value | 
++--------------------------+----------------------------+ 
+| character_set_client | latin1 | 
+| character_set_connection | latin1 | 
+| character_set_database | latin1 | 
+| character_set_results | latin1 | 
+| character_set_server | latin1 | 
+| character_set_system | utf8 | 
+| character_sets_dir | /usr/share/mysql/charsets/ | 
++--------------------------+----------------------------+ 
+7 rows in set (0.00 sec) 
+
+mysql> SHOW VARIABLES LIKE 'collation_%'; 
++----------------------+-------------------+ 
+| Variable_name | Value | 
++----------------------+-------------------+ 
+| collation_connection | latin1_swedish_ci | 
+| collation_database | latin1_swedish_ci | 
+| collation_server | latin1_swedish_ci | 
++----------------------+-------------------+ 
+3 rows in set (0.00 sec) 
+
+ 
+
+依次执行：
+
+set  character_set_client  =gb2312; 
+
+set  character_set_connection  =gb2312; 
+
+set   character_set_database  =gb2312; 
+
+set  character_set_results  =gb2312; 
+
+set character_set_server  =gb2312; 
+
+set  character_set_system  =gb2312; --此处utf-8也可以
+
+然后执行：
+
+SET collation_server = gb2312_chinese_ci
+
+
+SET collation_database = gb2312_chinese_ci
+
+ 
+
+SET collation_connection =gb2312_chinese_ci 
+
+执行完之后，请检查mysql下每个数据库，表，字段是否都是gb2312，不是则改过来，这样子就不会出现
+
+Illegal mix of collations (gbk_chinese_ci,IMPLICIT) and (gb2312_chinese_ci,IMPLICIT) for operation '='这个错误了，网上有资料说要重装，其实根本就不必，改动其编码即可
+
+
+
+
+ALTER TABLE tbl_name CONVERT TO CHARACTER SET
+
+
+
+
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION;
+
+
+
+GBK: create database test2 DEFAULT CHARACTER SET gbk COLLATE gbk_chinese_ci;
+
+UTF8: CREATE DATABASE `test2` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci
+
+
+
+
+
+.将选中的数据快儿拷贝到一个TXT文本文件中（记得把后面的空格消掉。。），假如存到“D:\data.txt”这个位置里。
+
+2.根据要导入的数据快儿建立MySql数据库和表，然后进入命令提示符里使用命令
+
+load data local infile 'D:\data.txt' into table exceltomysql fields terminated by '\t';
+
+使用Load Data InFile 'D:/sample.txt' Into Table terms lines terminated by '\r\n';语句导入.txt，成功！
+
+（如果要设置编码的话需要在fields前面加 character set utf8）
+
+
+
+
+
+添加UNIQUE(唯一索引) 
+mysql>ALTER TABLE `table_name` ADD UNIQUE ( 
+`column` 
+) 
+
+
+
+
+
+备份数据库
+
+数据库名叫dddd
+
+mysqldump -u root -p `dddd` > dddd.sql
+#回车后，输入密码
+Enter password: ******
+1
+2
+3
+现在当前目录下，有个dddd.sql文件
+
+移到阿里云
+
+把文件拷贝到阿里云的/root目录下
+
+scp dddd.sql root@123.456.78.9:/root
+1
+恢复到数据库
+
+先创建数据库
+
+mysql -u root -p
+#回车后，输入密码
+Enter password: ******
+#创建数据库dddd
+create database dddd;
+#ctrl+d退出数据库
+1
+2
+3
+4
+5
+6
+恢复数据
+
+mysql -u root -p dddd < dddd.sql
+#回车后，输入密码
+1
+2
+各种导出方式
+
+数据库：db_name 
+数据表：table_name 
+用户名：root 
+密码：dbpasswd
+
+导出数据库表结构
+
+mysqldump -uroot -pdbpasswd -d db_name >db.sql;
+1
+导出数据库中某个表的表结构
+
+mysqldump -uroot -pdbpasswd -d db_name table_name >db.sql;
+1
+导出数据库的表结构和表数据
+
+mysqldump -uroot -pdbpasswd db_name >db.sql;
+1
+导出数据库中某个表的表结构和表数据
+
+mysqldump -uroot -pdbpasswd db_name table_name >db.sql;
+
+
