@@ -458,3 +458,129 @@ mysqldump -uroot -pdbpasswd db_name >db.sql;
 mysqldump -uroot -pdbpasswd db_name table_name >db.sql;
 
 
+
+以下sql语句可以实现查找出一个表中的所有重复的记录
+复制代码 代码如下:
+
+select user_name,count(*) as count from user_table group by user_name having count>1; 
+
+
+
+方法一：
+直接执行命令：
+mysql> select count(1) from table  into outfile '/tmp/test.xls';
+Query OK, 31 rows affected (0.00 sec)
+在目录/tmp/下会产生文件test.xls
+遇到的问题：
+mysql> select count(1) from table   into outfile '/data/test.xls';
+报错：
+ERROR 1 (HY000): Can't create/write to file '/data/test.xls' (Errcode: 13)
+可能原因：mysql没有向/data/下写的权限
+方法二：
+查询都自动写入文件：
+mysql> pager cat > /tmp/test.txt ;
+PAGER set to 'cat > /tmp/test.txt'
+之后的所有查询结果都自动写入/tmp/test.txt'，并前后覆盖
+mysql> select * from table ;
+30 rows in set (0.59 sec)
+在框口不再显示查询结果
+方法三：
+跳出mysql命令行
+[root@SHNHDX63-146 ~]# mysql -h 127.0.0.1 -u root -p XXXX -P 3306 -e "select * from table"  > /tmp/test/txt
+
+
+
+
+hibernate 分组查询
+<span><span>//最后的dao层代码：</span></span>
+@SuppressWarnings("unchecked")
+	public List<Map<String, Object>> getMsgStatusCount(String userName,
+            String projectCode){
+    	StringBuffer sql = new StringBuffer();
+    	sql.append("SELECT m.msg_status as status, COUNT(m.msg_status) as num FROM message m WHERE m.message_Id IN (SELECT mu.message_Id FROM message_user mu WHERE mu.user_name = '"+ userName +"' ");
+//    	hql.append("SELECT * FROM Message m WHERE m.messageId IN (SELECT mu.messageId FROM MessageUser mu WHERE mu.userName = '"+ userName +"' ");
+    	if(StringUtils.isNotBlank(projectCode)){
+    		sql.append(" AND mu.app_id = '"+ projectCode +"')");
+    	}
+    	sql.append(" AND m.msg_type = '"+ Constants.MALF_TYPE_MALF +"' ");
+    	sql.append(" GROUP BY m.msg_status");
+    	
+    	Query query = getSession().createSQLQuery(sql.toString());
+        query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        List<Map<String, Object>> msgStatusCountList = new ArrayList<Map<String, Object>>();
+        List list = query.list();
+        for (int i = 0; i < list.size(); i++) {
+        	Map<String, Object> obj = (Map<String, Object>) list.get(i);
+        	msgStatusCountList.add(obj);
+		}
+    	
+    	return msgStatusCountList;
+ 
+ 
+//最后service层的部分代码
+        List<Map<String, Object>> msgStatusCountList = messageDao.getMsgStatusCount(userName, projectCode);
+        for (int i = 0; i < msgStatusCountList.size(); i++) {
+			if(msgStatusCountList.get(i).get("status").toString().equals("1")){
+				processingMsgCount = Integer.parseInt(msgStatusCountList.get(i).get("num").toString());
+			}
+			if(msgStatusCountList.get(i).get("status").toString().equals("2")){
+				completedMsgCount = Integer.parseInt(msgStatusCountList.get(i).get("num").toString());
+			}
+			if(msgStatusCountList.get(i).get("status").toString().equals("3")){
+				unAssignedCount = Integer.parseInt(msgStatusCountList.get(i).get("num").toString());
+			}
+			if(msgStatusCountList.get(i).get("status").toString().equals("4")){
+				assignedMsgCount = Integer.parseInt(msgStatusCountList.get(i).get("num").toString());
+			}
+		}
+
+根据时间年分组		
+select DATE_FORMAT(t.recordtime,'%Y') years, sum(t.cash) from cashrecords t group by years;  
+
+
+
+use mysql;
+select host,user,password from user;
+设置密码
+set password for root@localhost=password('root');
+创建用户
+create user 'root'@'172.18.23.201' identified by 'root';
+grant all privileges on root.* to 'root'@'172.18.23.201' identified by 'root';
+flush privileges;
+
+
+=IF(EXACT(F1313,E1314),"内容相同","内容不相同")
+
+
+alter table tablname auto_increment=1000;
+
+
+Mysql 增加数据的几种方式
+插入数据的其他写法
+// set
+insert into tab_name set col_1 = 'value_1';
+
+// 一次性插入多个
+$ insert into tab_name (col_1, col_2) values
+('value_1a', 'value_1b'),
+('value_2a', 'value_2b');
+
+//插入时有主键冲突，改为更新操作
+insert into tab_name (id, col_1, col_2) values
+(13, 'value_1', 'value_2')
+on duplicate key update
+col_1 = 'value_1', col_2 = 'value_2'
+
+// 将查询结果插入到数据（不应该出现在真实项目里，因为基数大时，会增加大量数据）
+$ insert into tab_name (col_1, col_2) select col_1, col_2 from tab_name2
+// 字段数和格式相同，才能讲不通字段名的插入
+insert into tab_name (col_1, col_2) select col_3, col_4 from tab_name3
+
+// 冲突替换，否则插入
+replace into teacher values
+(1, 'value_1', 'value_2', 'value_3')
+
+// 导入数据(使用outfile导出的数据，避免导入时主键冲突，应为null)
+// 也支持数据格式设置，同outfile
+$ load data infile 'path' into tab_name;
+

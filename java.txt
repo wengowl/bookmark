@@ -1,2 +1,17 @@
 keytool -genkey -alias "tomcat" -keyalg "RSA" -keystore ./tomcat.keystore
 keytool -importkeystore -srckeystore ./tomcat.keystore -destkeystore ./tomcat.keystore -deststoretype pkcs12
+
+
+linux内存占用
+ps -e -o 'pid,comm,args,pcpu,rsz,vsz,stime,user,uid' | grep java
+
+
+netstat -tu -c
+
+
+ls -l --block-size=m
+
+ps -mp 35163 -o THREAD,tid,time
+
+
+java -XX:+PrintFlagsInitial

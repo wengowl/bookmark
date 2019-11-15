@@ -1,0 +1,2 @@
+1.hbase 删除， hbase output组件可以勾选 delete rows by mapping key
+2.hbase output组件不会做覆盖操作

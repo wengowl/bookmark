@@ -1,0 +1,13 @@
+	index	管理系统首页
+	c_alllist	相关人才及项目
+	auditwait	项目进度审核
+	auditrecords	审核历史记录
+	rclibrary	人才信息管理
+	xmlibrary	项目信息管理
+	Xmwarning	预警项目管理
+	companymsg	机构信息管理
+	xmlist	资金兑现管理
+	usermanagement	用户管理
+	rolemanagement	角色管理
+	sysconfig	系统参数设置
+	operationrecords	操作记录

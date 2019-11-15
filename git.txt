@@ -28,7 +28,8 @@ $ git remote add origin https://git.oschina.net/liuqiqiang/gitTest.git
 
 七.接着执行:git push origin master
 
-
+无法pull
+git pull origin master --allow-unrelated-histories
 
 
 
@@ -103,3 +104,9 @@ $ git branch -D newbranch
 输出
 
 Deleted branch newbranch (was 93a1347).
+
+
+If your local changes are bad then just remove them or reset your local master to the state on remote
+
+ git reset --hard origin/master
+
